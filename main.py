@@ -44,7 +44,7 @@ class MyClient(discord.Client):
         member_count = sum(1 for _ in client.get_all_members())
         guild_count = sum(1 for _ in client.guilds)
         await client.change_presence(activity=discord.Game(name=f'with {member_count} cats in {guild_count} homes'))
-        print(f'Playing with {member_count} cats in {guild_count} guilds')
+        print(f'Playing with {member_count} cats in {guild_count} guilds (!cat)')
         print('------------------')
     async def on_message(self, message):
         
