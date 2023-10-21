@@ -3,6 +3,8 @@
 import os
 import random
 import discord
+with open('token.txt', 'r') as f:
+    token = f.read()
 
 cat_gifs = []
 for files in os.listdir("./cat-gifs"):
@@ -35,5 +37,5 @@ intents.message_content = True
 intents.members = True
 
 client = MyClient(intents=intents)
-client.run('MTE2NTMyNzc3NTcwODc0OTkxNQ.GrYHzY.2z2mMzhkxH63kMZxW4rASdTFo61Mxi8ZrLvG_w')
+client.run(token)
 
