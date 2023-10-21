@@ -7,8 +7,9 @@ with open('token.txt', 'r') as f:
     token = f.read()
 
 cat_gifs = []
-for files in os.listdir("./cat-gifs"):
-    cat_gifs.append(files)
+with open('cat-gifs.txt', 'r') as f:
+    for line in f:
+        cat_gifs.append(line.strip())
 
 class MyClient(discord.Client):
     async def on_ready(self):
@@ -18,17 +19,16 @@ class MyClient(discord.Client):
         guild_count = sum(1 for _ in client.guilds)
         client.activity = discord.Game(name=f'with {member_count} cats')
         print(f'Playing with {member_count} cats in {guild_count} guilds')
-
+        print('------')
     async def on_message(self, message):
-        print(f'Message from {message.author}: {message.content}')
-
-    async def on_message(self, message):
+        
         if message.author.id == self.user.id:
             return
 
         if  message.content.startswith('!cat'):
+            print(f"{message.author} used '!cat'")
             response = random.choice(cat_gifs)
-            await message.reply(file=discord.File(f'./cat-gifs/{response}'), mention_author=True)
+            await message.reply(f'{response}', mention_author=True)
 
     
 
