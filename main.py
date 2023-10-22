@@ -19,6 +19,8 @@ params = {
     'limit': 1  
 }
 
+chars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0","1","2","3","4","5","6","7","8","9"]
+
 def tenor_cat():
     response = requests.get(BASE_URL + ENDPOINT, params=params)
     print(response)
@@ -31,20 +33,14 @@ def tenor_cat():
       print(f"Error: {response.status_code}")
       return None
 
-
-cat_gifs = []
-with open('cat-gifs.txt', 'r') as f:
-    for line in f:
-        cat_gifs.append(line.strip())
-
 class MyClient(discord.Client):
     async def on_ready(self):
         print(f'Logged in as {self.user} (ID: {self.user.id})')
         print('---------------------------------------------')
         member_count = sum(1 for _ in client.get_all_members())
         guild_count = sum(1 for _ in client.guilds)
-        await client.change_presence(activity=discord.Game(name=f'with {member_count} cats in {guild_count} homes'))
-        print(f'Playing with {member_count} cats in {guild_count} guilds (!cat)')
+        await client.change_presence(activity=discord.Game(name=f'with {member_count} cats in {guild_count} homes (!cat, !add [link], !random)'))
+        print(f'Playing with {member_count} cats in {guild_count} homes (!cat, !add [link], !random)')
         print('------------------')
     async def on_message(self, message):
         
@@ -53,9 +49,35 @@ class MyClient(discord.Client):
 
         if  message.content.startswith('!cat'):
             print(f"{message.author} used '!cat'")
+            cat_gifs = []
+            with open('cat-gifs.txt', 'r') as f:
+                for line in f:
+                  cat_gifs.append(line.strip())
             response = random.choice(cat_gifs)
-            tenor_cat()
+            #tenor_cat()
             await message.reply(f'{response}', mention_author=True)
+
+        if  message.content.startswith('!add'):
+            print(f"{message.author} used '!add'")
+            response = message.content[5:]
+            with open('cat-gifs.txt', 'a') as f:
+                f.write(response + '\n')
+            await message.reply(f'Added <{response}> successfully', mention_author=True)
+
+        if  message.content.startswith('!ping'):
+            print(f"{message.author} used '!ping'")
+            times = int(message.content[6])
+            user_to_ping = message.content[8:]
+            
+            for i in range(0, times):
+                await message.reply(f'{user_to_ping}', mention_author=False)
+
+        if  message.content.startswith('!random'):
+            print(f"{message.author} used '!random'")
+            link = "https://prnt.sc/"
+            for i in range(0, 6):
+              link += chars[random.randint(0, len(chars) - 1)]
+            await message.reply(f'{link}', mention_author=True)
 
     
 
