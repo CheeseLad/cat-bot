@@ -60,14 +60,17 @@ class MyClient(discord.Client):
         if  message.content.startswith('!add'):
             print(f"{message.author} used '!add'")
             response = message.content[5:]
-            with open('cat-gifs.txt', 'a') as f:
-                curr_list = f.read().splitlines()
-                forbidden = ["!add", "!ping", "!random", "@everyone", "@here"]
+            with open('cat-gifs.txt', 'r') as f:
+                curr_list = []
+                for item in f.readlines():
+                    curr_list.append(item.strip())
+                forbidden = ["!cat", "!ping", "!random", "@everyone", "@here"]
                 if response in curr_list and "http" in response and response not in forbidden:
                     await message.reply(f'Already added <{response}>', mention_author=True)
                     return
                 else:
-                    f.write(response + '\n')
+                    with open('cat-gifs.txt', 'a') as f:
+                      f.write(response + '\n')
                     await message.reply(f'Added <{response}> successfully', mention_author=True)
 
         """if  message.content.startswith('!ping'):
