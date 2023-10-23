@@ -61,16 +61,25 @@ class MyClient(discord.Client):
             print(f"{message.author} used '!add'")
             response = message.content[5:]
             with open('cat-gifs.txt', 'a') as f:
-                f.write(response + '\n')
-            await message.reply(f'Added <{response}> successfully', mention_author=True)
+                curr_list = f.read().splitlines()
+                forbidden = ["!add", "!ping", "!random", "@everyone", "@here"]
+                if response in curr_list and "http" in response and response not in forbidden:
+                    await message.reply(f'Already added <{response}>', mention_author=True)
+                    return
+                else:
+                    f.write(response + '\n')
+                    await message.reply(f'Added <{response}> successfully', mention_author=True)
 
-        if  message.content.startswith('!ping'):
+        """if  message.content.startswith('!ping'):
             print(f"{message.author} used '!ping'")
             times = int(message.content[6])
             user_to_ping = message.content[8:]
-            
-            for i in range(0, times):
+            if "".join(user_to_ping) != "@everyone" and "".join(user_to_ping) != "@here":
+                for i in range(1, times):
+                  await message.reply(f'{user_to_ping}', mention_author=False)
                 await message.reply(f'{user_to_ping}', mention_author=False)
+            else:
+                await message.reply(f'Nice try, {message.author.mention}', mention_author=True)"""
 
         if  message.content.startswith('!random'):
             print(f"{message.author} used '!random'")
