@@ -6,6 +6,23 @@ import discord
 import requests
 import json
 from config import discord_token as token, tenor_token as tenor, forbidden;
+import logging
+import logging.handlers
+
+logger = logging.getLogger('discord')
+logger.setLevel(logging.DEBUG)
+logging.getLogger('discord.http').setLevel(logging.INFO)
+
+handler = logging.handlers.RotatingFileHandler(
+    filename='discord.log',
+    encoding='utf-8',
+    maxBytes=32 * 1024 * 1024,
+    backupCount=5,
+)
+dt_fmt = '%Y-%m-%d %H:%M:%S'
+formatter = logging.Formatter('[{asctime}] [{levelname:<8}] {name}: {message}', dt_fmt, style='{')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 BASE_URL = 'https://api.tenor.com/v1/'
 ENDPOINT = 'random'
@@ -87,13 +104,10 @@ class MyClient(discord.Client):
             await message.reply(f'{link}', mention_author=True)
 
 
-def main():
-  intents = discord.Intents.default()
-  intents.message_content = True
-  intents.members = True
+intents = discord.Intents.default()
+intents.message_content = True
+intents.members = True
 
-  client = MyClient(intents=intents)
-  client.run(token)
+client = MyClient(intents=intents)
+client.run(token, log_handler=None)
 
-if __name__ == '__main__':
-  main()
