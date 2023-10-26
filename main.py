@@ -5,11 +5,7 @@ import random
 import discord
 import requests
 import json
-
-with open('keys.txt', 'r') as f:
-    keys = f.read().splitlines()
-    token = keys[0]
-    tenor = keys[1]
+from config import discord_token as token, tenor_token as tenor, forbidden;
 
 BASE_URL = 'https://api.tenor.com/v1/'
 ENDPOINT = 'random'
@@ -46,6 +42,17 @@ class MyClient(discord.Client):
         
         if message.author.id == self.user.id:
             return
+        
+        if  message.content.startswith('!help'):
+            print(f"{message.author} used '!help'")
+            await message.reply("Commands:\n\n`!add` - Adds an image\n`!cat`", mention_author=True)
+
+        """if message.content.startswith('!remove'):
+            response = message.content[5:]
+            with open('cat-gifs.txt', 'w') as f:
+                if response in f.readlines():
+                    await message.reply(f'Removed <{response}> successfully', mention_author=True)
+                    f.write(response + '\n')"""
 
         if  message.content.startswith('!cat'):
             print(f"{message.author} used '!cat'")
@@ -54,7 +61,6 @@ class MyClient(discord.Client):
                 for line in f:
                   cat_gifs.append(line.strip())
             response = random.choice(cat_gifs)
-            #tenor_cat()
             await message.reply(f'{response}', mention_author=True)
 
         if  message.content.startswith('!add'):
@@ -64,25 +70,14 @@ class MyClient(discord.Client):
                 curr_list = []
                 for item in f.readlines():
                     curr_list.append(item.strip())
-                forbidden = ["!cat", "!ping", "!random", "@everyone", "@here"]
-                if response in curr_list and "http" in response and response not in forbidden:
-                    await message.reply(f'Already added <{response}>', mention_author=True)
-                    return
+                
+                if response in curr_list and "http" in response and response in forbidden:
+                        await message.reply(f'Already added that GIF', mention_author=True)
                 else:
                     with open('cat-gifs.txt', 'a') as f:
                       f.write(response + '\n')
-                    await message.reply(f'Added <{response}> successfully', mention_author=True)
-
-        """if  message.content.startswith('!ping'):
-            print(f"{message.author} used '!ping'")
-            times = int(message.content[6])
-            user_to_ping = message.content[8:]
-            if "".join(user_to_ping) != "@everyone" and "".join(user_to_ping) != "@here":
-                for i in range(1, times):
-                  await message.reply(f'{user_to_ping}', mention_author=False)
-                await message.reply(f'{user_to_ping}', mention_author=False)
-            else:
-                await message.reply(f'Nice try, {message.author.mention}', mention_author=True)"""
+                      await message.reply(f'Added GIF successfully.', mention_author=True)
+                      
 
         if  message.content.startswith('!random'):
             print(f"{message.author} used '!random'")
@@ -91,11 +86,14 @@ class MyClient(discord.Client):
               link += chars[random.randint(0, len(chars) - 1)]
             await message.reply(f'{link}', mention_author=True)
 
-    
 
-intents = discord.Intents.default()
-intents.message_content = True
-intents.members = True
+def main():
+  intents = discord.Intents.default()
+  intents.message_content = True
+  intents.members = True
 
-client = MyClient(intents=intents)
-client.run(token)
+  client = MyClient(intents=intents)
+  client.run(token)
+
+if __name__ == '__main__':
+  main()
