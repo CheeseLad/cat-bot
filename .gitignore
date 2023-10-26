@@ -1,7 +1,8 @@
 __pycache__/
-keys.txt
+config.py
 prntscr.py
 tenor.py
 tests.py
 cat-gifs-old.py
 database-create.py
+old/
